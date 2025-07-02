@@ -1,10 +1,18 @@
 import streamlit as st
 import pandas as pd
 import io
+import re
 
 def clean_csv(df):
     df.dropna(how='all', inplace=True)
     df.dropna(axis=1, how='all', inplace=True)
+    # Remove all non-alphanumeric ASCII characters from all string columns
+    def clean_str(val):
+        if isinstance(val, str):
+            # Keep only A-Z, a-z, 0-9, and whitespace
+            return re.sub(r'[^A-Za-z0-9\s]', '', val)
+        return val
+    df = df.applymap(clean_str)
     return df
 
 def merge_csvs(df1, df2, merge_column):
